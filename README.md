@@ -1,57 +1,31 @@
-# Bread-Rescue
-# Bread Surplus Reward System
+# 🥖 BreadRescue - Fight Bread Waste and Reward the Community
 
-## Overview
-The **Bread Surplus Reward System** is a blockchain-based solution designed to help reduce food waste by redistributing surplus bread from bakeries. By using a smart contract deployed on **Hedera's EVM-compatible layer**, we can track and reward donations of surplus bread to those in need.
+## 🌱 Introduction
 
-- **Smart Contract**: Written in Solidity, the contract accepts the surplus data of a bakery (detected via AI) and processes rewards for the donor and bakery.
-- **Reward Distribution**: When surplus bread is donated, a donor’s public key is provided, and the contract splits the reward (in tokens) 50/50 between the donor and the bakery.
+BreadRescue aims to reduce bread waste and promote community solidarity. In France alone, 150,000 tons of bread are wasted every year, equivalent to 10% of production. BreadRescue transforms these wasted loaves into measurable impact, creating a virtuous cycle that benefits local communities, bakeries, and the environment.
 
 ---
 
-## Smart Contract (Solidity)
+## 📊 Key Statistics
 
-The smart contract in **`BreadSurplusReward.sol`** implements a reward system using an ERC-20 token deployed on Hedera.
+* **150,000 tons of bread** wasted every year in France.
+* Equivalent to **9 baguettes per person** annually.
+* BreadRescue converts these losses into measurable, real-time impact using Hedera blockchain.
 
-### Key Features:
-- **Reward Distribution**: The contract receives surplus data, calculates a reward, and distributes it between the donor and the bakery.
-- **Security**: Only the owner (admin or AI system) can trigger the reward distribution to ensure fairness.
-- **Event Emission**: After each donation, an event is emitted to log the transaction.
+Source: Too Good To Go - Boulangerie
 
-### Example Code:
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+## 🥇 BreadTokens (BT) - Reward System
 
-contract BreadSurplusReward {
-    address public owner;
-    IERC20 public rewardToken;
+| Element          | Description                                                                                                                   | Validation / Safeguards                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Base Reward**  | 5 BT for the bakery + 5 BT for the volunteer. Each BT represents 1 kg of saved bread.                                         | Transfer conditioned by a scheduled transaction on Hedera.   |
+| **Speed Bonus**  | +1 BT for each 15-minute time saved between CLAIMED and DELIVERED (max 3 BT). Formula: bonus = max(0, 3 - ceil(Δt / 15 min)). | Calculated by the backend before scheduling the transaction. |
+| **Traceability** | Timestamped with HCS (< 5 s) for undisputable event logging.                                                                  | Image verification by AI to prevent fraud.                   |
 
-    event RewardDistributed(address indexed donor, address indexed bakery, uint256 amount);
+---
 
-    constructor(address _tokenAddress) {
-        owner = msg.sender;
-        rewardToken = IERC20(_tokenAddress);
-    }
+## 💡 Why BreadRescue?
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not authorized");
-        _;
-    }
-
-    function rewardForDonation(address donor, address bakery, uint256 totalRewardAmount) public onlyOwner {
-        require(donor != address(0) && bakery != address(0), "Invalid address");
-        require(totalRewardAmount > 0, "Invalid amount");
-
-        uint256 half = totalRewardAmount / 2;
-
-        require(rewardToken.transfer(donor, half), "Token transfer to donor failed");
-        require(rewardToken.transfer(bakery, half), "Token transfer to bakery failed");
-
-        emit RewardDistributed(donor, bakery, totalRewardAmount);
-    }
-}
-
-interface IERC20 {
-    function transfer(address to, uint256 amount) external returns (bool);
-}
+* **Unforgeable Traceability** - Every key event is timestamped and signed on Hedera.
+* **Trustless Automation** - Rewards are triggered automatically without manual intervention.
+* **Community Transparency** - All transactions are public and verifiable.
